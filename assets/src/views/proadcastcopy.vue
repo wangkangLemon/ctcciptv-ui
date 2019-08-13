@@ -41,7 +41,7 @@
           arrow="always"
           height="500px"
           :autoplay="false"
-          indicator-position="outside"
+          indicator-position="none"
           ref="carousel"
         >
           <el-carousel-item v-for="(item,index) in pageNum" :key="index">
@@ -67,10 +67,8 @@
             </div>
           </el-carousel-item>
         </el-carousel>
-      </div>
-
-      <!-- <div class="picScroll_left clearfix"> -->
-      <!-- <div class="item prev">
+        <div class="picScroll_left clearfix">
+          <!-- <div class="item prev">
           <a href="#" v-items @up="leftIconUp" @down="leftIconDown" @click="clickLeft">
             <img src="../../static/images/icon_arrow_left.png" />
           </a>
@@ -95,24 +93,35 @@
           <a href="#" v-items @up="rightIconUp" @down="rightIconDown" @click="clickRight">
             <img src="../../static/images/icon_arrow_right.png" />
           </a>
-      </div>-->
-      <!-- <ul class="tabpage">
-          <li class="item" v-items>
-            <a href="#">1-6</a>
-          </li>
-          <li class="item" v-items>
-            <a href="#">7-13</a>
-          </li>
-          <li class="item" v-items>
-            <a href="#">13-20</a>
-          </li>
-      </ul>-->
-      <!-- </div> -->
+          </div>-->
+          <ul class="tabpage">
+            <li
+              v-for="(item,index) in btnArr"
+              v-items
+              @right="btn_right(item,index)"
+              @left="btn_left(item,index)"
+              @up="btn_up(item,index)"
+              @down="btn_down(item,index)"
+              class="item btn_item"
+              style="margin-top:0.5rem;"
+              :key="index"
+              :class="{'active':isActive?index==fetchParam.page-1:false}"
+            >
+              <a href="#">{{item.text}}</a>
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
     <div class="tjbox w1760 clearfix">
       <h2>为您推荐</h2>
       <ul class="clearfix l">
-        <li v-for="(item,index) in commtend" v-items @right="commtend_right(item,index)" :key="index">
+        <li
+          v-for="(item,index) in commtend"
+          v-items
+          @right="commtend_right(item,index)"
+          :key="index"
+        >
           <a class="pic" href="#">
             <img :src="item.image" />
             <h4 class="title">{{item.course_name}}</h4>
@@ -129,12 +138,14 @@ export default {
   name: "proadcast",
   data() {
     return {
+      isActive: true,
+      btnArr: [],
       fetchParam: {
         page: 1,
         pagesize: 6
       },
-      total:31,
-      pageNum: 0,//总页数
+      total: 125,
+      pageNum: 0, //总页数
       info: [],
       selectWorks: [
         {
@@ -183,8 +194,27 @@ export default {
     };
   },
   created() {
-   this.pageNum=parseInt(this.total/6) +(this.total%6>0?1:0)
-  
+    this.pageNum = parseInt(this.total / 6) + (this.total % 6 > 0 ? 1 : 0);
+    var arr = [];
+    var arr1 = [];
+    var start = 0;
+    var end = 0;
+    for (var x = 0; x < this.total; x++) {
+      arr.push(x + 1);
+    }
+    var z = parseInt(arr.length / 6) + (arr.length % 6 > 0 ? 1 : 0);
+    for (var y = 0; y < z; y++) {
+      var cutArr = arr.slice(0, 6);
+      arr.splice(0, 6);
+      arr1.push(cutArr);
+      start = cutArr.shift();
+      end = cutArr.slice(-1);
+      if (end == "") {
+        this.btnArr.push({ text: start });
+      } else {
+        this.btnArr.push({ text: start + "-" + end });
+      }
+    }
     this.getData();
   },
 
@@ -213,6 +243,7 @@ export default {
         var params = { courseid: this.$route.query.data_list.ref_id };
       }
       service.courseInfo(params).then(ret => {
+        console.log(ret.data);
         this.info = ret.data.info;
         this.commtend = ret.data.recommend;
         // this.getSelectData();
@@ -245,8 +276,14 @@ export default {
       this.$service.move(this.$el.querySelectorAll(".item_commtend")[5]);
     },
     down(e, index) {
-      this.$service.move("down");
-      this.getscrollIntoView(true);
+      if (index >= 3) {
+        this.$service.move(
+          this.$el.querySelectorAll(".btn_item")[this.fetchParam.page - 1]
+        );
+      } else {
+        this.$service.move("down");
+        this.getscrollIntoView(true);
+      }
     },
     carousel_left(e, index) {
       if (index == 2) {
@@ -262,8 +299,7 @@ export default {
         } else {
           this.$refs.carousel.prev();
           this.fetchParam.page--;
-         
-          console.log(this.fetchParam.page);
+          console.log(this.fetchParam.page); //这里执行切换选集页数，调用本页数数据
           this.$service.move(
             this.$el.querySelectorAll(".item_commtend")[
               6 * (this.fetchParam.page - 1)
@@ -284,13 +320,16 @@ export default {
       }
     },
     carousel_right(value, index) {
-      let num=this.total/6+(this.total%6>0?1:0)
+      let num = parseInt(this.total / 6) + (this.total % 6 > 0 ? 1 : 0);
       if (index == 2 || index == this.selectWorks.length - 1) {
-        if (this.fetchParam.page ==num ) {
+        if (this.fetchParam.page == num) {
           alert("已经到最后一页了");
           return;
         } else {
           this.$refs.carousel.next();
+
+          console.log(this.fetchParam.page + 1); //这里执行切换选集页数，调用本页数数据
+
           this.$service.move(
             this.$el.querySelectorAll(".item_commtend")[
               6 * this.fetchParam.page
@@ -308,6 +347,66 @@ export default {
       } else {
         this.$service.move("right");
       }
+    },
+    btn_left(e, index) {
+      let num = parseInt(this.total / 6) + (this.total % 6 > 0 ? 1 : 0);
+      if (this.fetchParam.page == 1) {
+        alert("这里是首页了");
+        return;
+      } else {
+        this.$refs.carousel.prev();
+        this.$service.move(this.$el.querySelectorAll(".btn_item")[index - 1]);
+      }
+      this.fetchParam.page--;
+    },
+    btn_right(e, index) {
+      this.isActive = false;
+      let num = parseInt(this.total / 6) + (this.total % 6 > 0 ? 1 : 0);
+      if (this.fetchParam.page == num) {
+        alert("这里是最后一页了");
+        return;
+      } else {
+        this.$service.move(this.$el.querySelectorAll(".btn_item")[index + 1]);
+        this.$refs.carousel.next();
+      }
+      this.fetchParam.page++;
+    },
+    btn_down(e, index) {
+      this.isActive = false;
+      this.$service.move("down");
+      if (index == this.btnArr.length - 1) {
+        return;
+      } else {
+        this.$refs.carousel.prev();
+      }
+      let page;
+      let present = this.$service.pointer.$el;
+      let allelement = this.$el.querySelectorAll(".btn_item");
+      for (var i = 0; i < allelement.length; i++) {
+        if (allelement[i] == present) {
+          page = i;
+        }
+      }
+      console.log("下" + page);
+      //这里调用数据
+    },
+    btn_up(e, index) {
+      this.$service.move("up");
+      if (index == 0) {
+        return;
+      } else {
+        this.$refs.carousel.prev();
+      }
+      let page;
+      let present = this.$service.pointer.$el;
+      let allelement = this.$el.querySelectorAll(".btn_item");
+      for (var i = 0; i < allelement.length; i++) {
+        if (allelement[i] == present) {
+          page = i;
+        }
+      }
+      console.log("上" + page);
+      //这里调用数据
     }
   }
 };
@@ -317,12 +416,17 @@ export default {
 .picScroll_left .picList[data-v-07e98dc0] {
   margin-left: 0.6rem;
 }
+.active {
+  outline: 2px solid #ffffff;
+  /* background: #169e00; */
+}
 .focus {
   transition: 0.5s;
   transform: scale(1.1);
   outline: 2px solid #ffffff;
   /* background: #169e00; */
 }
+
 /* .el-carousel__item h3 {
   color: #475669;
   font-size: 18px;
