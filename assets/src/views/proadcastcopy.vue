@@ -144,6 +144,7 @@ export default {
         page: 1,
         pagesize: 6
       },
+      myindex:'',//选集移动到按钮的焦点索引
       total: 125,
       pageNum: 0, //总页数
       info: [],
@@ -276,10 +277,13 @@ export default {
       this.$service.move(this.$el.querySelectorAll(".item_commtend")[5]);
     },
     down(e, index) {
+      this.myindex=index
+    
       if (index >= 3) {
         this.$service.move(
           this.$el.querySelectorAll(".btn_item")[this.fetchParam.page - 1]
         );
+        this.getscrollIntoView(true);
       } else {
         this.$service.move("down");
         this.getscrollIntoView(true);
@@ -377,7 +381,7 @@ export default {
       if (index == this.btnArr.length - 1) {
         return;
       } else {
-        this.$refs.carousel.prev();
+        this.$refs.carousel.next();
       }
       let page;
       let present = this.$service.pointer.$el;
