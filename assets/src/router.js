@@ -15,8 +15,8 @@ import more from './routers/more'
 Vue.use(Router)
 // const router = new Router
 export default new Router({
-	// base: '/view',
-	// mode:'history',
+	base: '/view',
+	mode:'history',
 	routes: [
 		{
 		  path:'/',

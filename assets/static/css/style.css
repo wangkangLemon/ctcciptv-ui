@@ -104,7 +104,7 @@ body {width:100%;background:#020f34 url(../images/bg.png) repeat-y center top;}
 .picScroll_left .prev {float:left;}
 .picScroll_left .next {float:right;}
 .picScroll_left .tabpage { float:left; margin-top:0.1rem; zoom:1;margin-left:0.59rem;}
-.picScroll_left .tabpage li { float:left;margin-right:0.2rem;cursor:pointer;font-size:32px;}
+.picScroll_left .tabpage li { float:left;margin-right:0.2rem;cursor:pointer;font-size:0.4rem;width: 2rem;text-align: center;}
 .picScroll_left .tabpage li a {color:#fff;padding:0 0.2rem;height:0.5rem;line-height:0.5rem;border-radius:0.25rem;color:#fff;}
 .picScroll_left .tabpage li.current a {padding:0 0.2rem;height:0.5rem;line-height:0.5rem;background:rgba(6,153,34,1);border-radius:0.25rem;color:#fff;}
 /* .picScroll_left .tabpage li a:focus {outline: 0;background-color: rgba(22,158,0,0.5);box-shadow:0rem 0rem 0.08rem 0.02rem rgba(113,255,90,1);} */
