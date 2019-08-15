@@ -109,6 +109,7 @@
             >
               <a href="#">{{item.text}}</a>
             </li>
+            
           </ul>
         </div>
       </div>
@@ -145,7 +146,7 @@ export default {
         pagesize: 6
       },
       myindex:'',//选集移动到按钮的焦点索引
-      total: 125,
+      total: 105,
       pageNum: 0, //总页数
       info: [],
       selectWorks: [
@@ -216,6 +217,7 @@ export default {
         this.btnArr.push({ text: start + "-" + end });
       }
     }
+    console.log(this.btnArr)
     this.getData();
   },
 
@@ -278,7 +280,6 @@ export default {
     },
     down(e, index) {
       this.myindex=index
-    
       if (index >= 3) {
         this.$service.move(
           this.$el.querySelectorAll(".btn_item")[this.fetchParam.page - 1]
@@ -395,12 +396,10 @@ export default {
       //这里调用数据
     },
     btn_up(e, index) {
+      console.log(this.fetchParam.page)
+      console.log(this.myindex)
       this.$service.move("up");
-      if (index == 0) {
-        return;
-      } else {
-        this.$refs.carousel.prev();
-      }
+      this.$refs.carousel.prev()
       let page;
       let present = this.$service.pointer.$el;
       let allelement = this.$el.querySelectorAll(".btn_item");

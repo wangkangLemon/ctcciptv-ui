@@ -1,2 +1,0 @@
-webpackJsonp([8],{"RB+t":function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var a={name:"interview",components:{PublicHead:n("Vygu").a},data:function(){return{}}},r={render:function(){var e=this.$createElement;return(this._self._c||e)("div",[this._v("111222")])},staticRenderFns:[]};var u=n("VU/8")(a,r,!1,function(e){n("zCfu")},"data-v-273a5c35",null);t.default=u.exports},zCfu:function(e,t){}});
-//# sourceMappingURL=8.d34f9b4616e5e6a1808e.js.map
